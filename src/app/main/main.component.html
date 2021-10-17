@@ -1,0 +1,640 @@
+<!-- <nav class="navbar navbar-fixed-top" style="background-color: rgb(34, 36, 42);">
+<div class="container-fluid">
+<img class="navbar-navbrand" mat-button [matMenuTriggerFor]="menu" src="/assets/logo.png" alt="logo" style="width: 100px;"/>
+  <ul class="nav nav-pills">
+    <li class="nav-item">
+      <a mat-button [matMenuTriggerFor]="menu" class="nav-link" style="cursor: pointer;" id="fichier">Fichier</a>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="onChoose()"><mat-icon>create_new_folder</mat-icon>Ouvrir un fichier</button>
+        <button mat-menu-item href=""
+                (click)= "openSaveAs(save)" [disabled]="!pathImage"
+                ><mat-icon>save</mat-icon>Enregistrer sous...</button>
+      </mat-menu>
+    </li>
+    <li class="nav-item">
+      <a mat-button [matMenuTriggerFor]="menu1" class="nav-link"
+          [ngClass]="{
+            'link-disabled': !pathImage
+          }"
+          style="cursor: pointer;">Vue de l'image</a>
+      <mat-menu #menu1="matMenu">
+        <button mat-menu-item (click)="onSymetrie('absisse')" [disabled]="!pathImage">Retourner horizontalement</button>
+        <button mat-menu-item (click)="onSymetrie('ordonne')" [disabled]="!pathImage">Retourner verticalement</button>
+        <button mat-menu-item (click)="onRotation()" [disabled]="!pathImage">Rotation 90</button>
+        <button mat-menu-item (click)="onRotation180()" [disabled]="!pathImage">Rotation 180</button>
+      </mat-menu>
+    </li>
+    <li class="nav-item">
+      <a mat-button [matMenuTriggerFor]="menu2" class="nav-link"
+          [ngClass]="{
+            'link-disabled': !pathImage
+          }"
+          style="cursor: pointer;">Ajustements</a>
+      <mat-menu #menu2="matMenu">
+        <button mat-menu-item (click)="onHistoNear(true)" [disabled]="!pathImage">Amelioration</button>
+        <button mat-menu-item (click)="onInversion(true)" [disabled]="!pathImage">Inversion de couleur</button>
+        <button mat-menu-item (click)="onGrayNiveau(true)" [disabled]="!pathImage">Niveau de gris</button>
+        <button mat-menu-item (click)="onBinarisation(true)" [disabled]="!pathImage">Noir et Blanc</button>
+        <button mat-menu-item (click)="onContour()" [disabled]="!pathImage">Tortue de Paper</button>
+        <button mat-menu-item (click)="onConservateur()" [disabled]="!pathImage">Conservateur</button>
+      </mat-menu>
+    </li>
+    <li class="nav-item">
+      <a mat-button [matMenuTriggerFor]="menu3" class="nav-link"
+          [ngClass]="{
+            'link-disabled': !pathImage
+          }"
+          style="cursor: pointer;">Filtrage</a>
+      <mat-menu #menu3="matMenu">
+        <button mat-menu-item (click)="open(content)" [disabled]="!pathImage">Lineaire</button>
+        <button mat-menu-item (click)="openNonLineaire(non)" [disabled]="!pathImage">Non lineaire</button>
+      </mat-menu>
+    </li>
+
+    <li class="nav-item">
+      <a mat-button [matMenuTriggerFor]="menu4" class="nav-link"
+          [ngClass]="{
+            'link-disabled': !pathImage
+          }"
+          style="cursor: pointer;">Niveau</a>
+          <mat-menu #menu4="matMenu">
+            <button mat-menu-item (click)="openLumiere(lumiere)" [disabled]="!pathImage">Lumière</button>
+            <button mat-menu-item (click)="openEtalage(etalage)" [disabled]="!pathImage">Etalage</button>
+          </mat-menu>
+    </li>
+  </ul>
+</div>
+</nav>
+
+
+<ng-template #non class="me" let-c="close" let-d="dismiss" style="width: 200px;">
+  <div class="modal-draggable" ngDraggable [handle]="draggeMe">
+    <div #draggeMe class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Filtrage non-linéaire</h4>
+    </div>
+    <div class="modal-body col-auto">
+        <input
+        type="radio" name="miniCanvasNon" value="original"
+        id="departInput1" (click)="putOriginal()" class="input-hidden" checked/>
+        <label for="departInput1" class="label-all">
+          <canvas id="canvasDepart1" class="canvas-label" width="120" height="80"></canvas>
+          <p class="image-label">
+            original
+          </p>
+        </label>
+
+        <input
+          type="radio" name="miniCanvasNon" value="erosion"
+          id="erosionInput" (click)="putOriginal(); onFiltrageNonlineaire('erosion', true)" class="input-hidden"/>
+        <label for="erosionInput" class="label-all">
+          <canvas id="canvasErosion" class="canvas-label" width="120" height="80"></canvas>
+          <p class="image-label">
+            Erosion
+          </p>
+        </label>
+
+        <input
+          type="radio" name="miniCanvasNon" value="dilatation"
+          id="dilatationInput" (click)="putOriginal(); onFiltrageNonlineaire('dilatation', true)" class="input-hidden"/>
+        <label for="dilatationInput" class="label-all">
+          <canvas id="canvasDilatation" class="canvas-label" width="120" height="80"></canvas>
+          <p class="image-label">
+            Dilatation
+          </p>
+        </label>
+
+        <input
+          type="radio" name="miniCanvasNon" value="mediane"
+          id="MedianeInput" (click)="putOriginal(); onMediane(true)" class="input-hidden"/>
+        <label for="MedianeInput" class="label-all">
+          <canvas id="canvasMediane" class="canvas-label" width="120" height="80"></canvas>
+          <p class="image-label">
+            Mediane
+          </p>
+        </label>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="c('cancel')">Annuler</button>
+      <button type="button" class="btn btn-outline-dark" (click)="c('save')">Ok</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #lumiere class="me" let-c="close" let-d="dismiss" style="width: 200px;">
+  <div class="modal-draggable" ngDraggable [handle]="draggeMe">
+    <div #draggeMe class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Lumiere</h4>
+    </div>
+    <div class="modal-body col-auto">
+    <div>
+      <label for="minOpac" style="margin-right: 18px;">Opaciter</label>
+        <input type="range" id="minOpac" class="rangeClass" min="-100" max="100" [(ngModel)]="opacity"  (change)="onOpacity()"/>
+    </div>
+      <div>
+        <label for="maxEtalage">Luminositer</label>
+        <input type="range" id="maxEtalage" class="rangeClass" min="-100" max="100" [(ngModel)]="luminosite"  (change)="onLumunosite()"/>
+
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="c('cancel')">Annuler</button>
+      <button type="button" class="btn btn-outline-dark" (click)="c('save')">Ok</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #etalage class="me" let-c="close" let-d="dismiss" style="width: 200px;">
+  <div class="modal-draggable" ngDraggable [handle]="draggeMe">
+    <div #draggeMe class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Etalage</h4>
+    </div>
+    <div class="modal-body col-auto">
+      <div>
+        <label for="minEtalage">Minimal</label>
+          <input type="range" id="minEtalage" class="rangeClass" min="0" max="255" [(ngModel)]="minimal"  (change)="onEtalage()"/>
+      </div>
+      <div>
+        <label for="maxEtalage">Maximal</label>
+          <input type="range" id="maxEtalage" class="rangeClass" min="0" max="255" [(ngModel)]="maximal"  (change)="onEtalage()"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="c('cancel')">Annuler</button>
+      <button type="button" class="btn btn-outline-dark" (click)="c('save')">Ok</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #save class="me" let-c="close" let-d="dismiss" style="width: 200px;">
+  <div class="modal-draggable" ngDraggable [handle]="draggeMe">
+    <div #draggeMe class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Enregister sous</h4>
+    </div>
+    <div class="modal-body col-auto">
+      <form>
+        <div class="mb-3">
+          <label for="nomFichier" class="form-label">Nom du fichier</label>
+          <input type="text" name="nomFichier" id="nomFichier" class="form-control" [(ngModel)]="nameFile"/>
+        </div>
+        <div class="mb-3">
+          <label for="fileType" class="form-label">Type de fichier</label>
+          <select name="fileType" id="fileType" [(ngModel)]="typeFile" class="form-control">
+            <option value="png">PNG</option>
+            <option value="jpeg">JPEG</option>
+            <option value="jpg">JPG</option>
+          </select>
+        </div>
+      </form>
+
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="c('cancel')">Annuler</button>
+      <button type="button" class="btn btn-outline-dark" (click)="c('save')">Ok</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #content class="me" let-c="close" let-d="dismiss">
+  <div class="modal-draggable" ngDraggable [handle]="draggeMe">
+    <div #draggeMe class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Filtrage Linéaire</h4>
+    </div>
+    <div class="modal-body modal-scrollable-x col-auto">
+        <input
+          type="radio" name="miniCanvas" value="original"
+          id="departInput" (click)="putOriginal()" class="input-hidden" checked/>
+        <label for="departInput" class="label-all">
+          <canvas id="canvasDepart" class="canvas-label" width="120" height="80"></canvas>
+          <p class="image-label">
+            Original
+          </p>
+        </label>
+
+        <input
+          type="radio" name="miniCanvas" value="lissage"
+          id="lissageInput" (click)="putOriginal(); onFiltrageLineaire('lissage', true)" class="input-hidden" />
+        <label for="lissageInput" class="label-all">
+          <canvas id="canvasLissage" class="canvas-label" width="120" height="80"></canvas>
+          <p class="image-label">
+            Lissage
+          </p>
+        </label>
+        <input
+          type="radio" name="miniCanvas" value="gaussien"
+          id="gaussienInput" (click)="putOriginal(); onFiltrageLineaire('gaussien', true)" class="input-hidden" />
+        <label for="gaussienInput" class="label-all">
+          <canvas id="canvasGaussien" class="canvas-label" width="120" height="80"></canvas>
+          <p class="image-label">
+            Gaussien
+          </p>
+        </label>
+
+        <input
+          type="radio" name="miniCanvas" value="convolution"
+          id="convolutionInput" (click)="putOriginal(); onFiltrageLineaire('convolution', true)" class="input-hidden" />
+        <label for="convolutionInput" class="label-all">
+          <canvas id="canvasConvolution" class="canvas-label" width="120" height="80"></canvas>
+          <p class="image-label">
+            Convolution
+          </p>
+        </label>
+
+        <input
+          type="radio" name="miniCanvas" value="rehausseur"
+          id="rehausseurInput" (click)="putOriginal(); onFiltrageLineaire('rehausseur', true)" class="input-hidden" />
+        <label for="rehausseurInput" class="label-all">
+          <canvas id="canvasRehausseur" class="canvas-label" width="120" height="80"></canvas>
+          <p class="image-label">
+            Rehausseur
+          </p>
+        </label>
+
+        <input
+          type="radio" name="miniCanvas" value="accentuation"
+          id="accentuationInput" (click)="putOriginal(); onFiltrageLineaire('accentuation', true)" class="input-hidden" />
+        <label for="accentuationInput" class="label-all">
+          <canvas id="canvasAccentuation" class="canvas-label" width="120" height="80"></canvas>
+          <p class="image-label">
+            Accentuation
+          </p>
+        </label>
+
+        <input
+          type="radio" name="miniCanvas" value="laplacien"
+          id="laplacienInput" (click)="putOriginal(); onFiltrageLineaire('laplacien', true)" class="input-hidden" />
+        <label for="laplacienInput" class="label-all">
+          <canvas id="canvasLaplacien" class="canvas-label" width="120" height="80"></canvas>
+          <p class="image-label">
+            Laplacien
+          </p>
+        </label>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="c('cancel')">Annuler</button>
+      <button type="button" class="btn btn-outline-dark" (click)="c('save')">Ok</button>
+    </div>
+  </div>
+</ng-template>
+
+<div class="col-lg-12 col-xl-12 container row" style="margin-left: 0.5rem !important; margin-top: 1rem;">
+  <div class="col-sm-9 col-md-6 col-lg-8 col-xl-10">
+    <canvas #canvas width="930" height="610">
+    </canvas>
+  </div>
+  <div class="col-sm-3 col-md-6 col-lg-4 col-xl-2 pl-2-5">
+    <mat-card style="width: 340px; height: 300px;">
+      <mat-card-header>
+        <mat-card-title>Histogramme</mat-card-title>
+      </mat-card-header>
+      <div echarts mat-card-image [options]="chartOption" [merge]="mergeOptions" class="card-img-top my-chart"></div>
+    </mat-card>
+
+    <mat-card class="mt-6" style="width: 340px; height: 230px;">
+      <mat-card-header>
+        <mat-card-title>Historique</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="story-scrollable">
+        <h4 [ngClass]="{
+                        'card-title': true,
+                        'story-title': true,
+                        'story-active': i == storyIndice,
+                        'story-to-remove': i > storyIndice}"
+            *ngFor="let item of arrayStory; let i = index" (click)="resetImage(item.imageData, i)">{{item.nameTache}}</h4>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div> -->
+
+<!-- header debut-->
+<header class="header black-bg">
+  <a class="logo">
+    <img class="navbar-navbrand" mat-button [matMenuTriggerFor]="menu" src="/assets/logo.png" alt="logo" style="width: 100px;"/>
+  </a>
+  <div class="nav notify-row" id="top_menu">
+    <ul class="nav top-menu">
+      <li class="nav-item">
+        <a mat-button [matMenuTriggerFor]="menu" class="nav-link" id="fichier">Fichier</a>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="onChoose()"><mat-icon>create_new_folder</mat-icon>Ouvrir un fichier</button>
+          <button mat-menu-item href=""
+                  (click)= "openSaveAs(save)" [disabled]="!pathImage"
+                  ><mat-icon>save</mat-icon>Enregistrer sous...</button>
+        </mat-menu>
+      </li>
+    </ul>
+  </div>
+  <div class="top-menu">
+    <ul class="nav pull-right top-menu">
+      <li class="nav-item">
+        <a mat-button [matMenuTriggerFor]="menu1" class="nav-link"
+            [ngClass]="{
+              'link-disabled': !pathImage
+            }"
+            style="cursor: pointer;">Vue de l'image</a>
+        <mat-menu #menu1="matMenu">
+          <button mat-menu-item (click)="onSymetrie('ordonne')" [disabled]="!pathImage">Retourner horizontalement</button>
+          <button mat-menu-item (click)="onSymetrie('absisse')" [disabled]="!pathImage">Retourner verticalement</button>
+          <button mat-menu-item (click)="onRotation()" [disabled]="!pathImage">Rotation 90</button>
+          <button mat-menu-item (click)="onRotation180()" [disabled]="!pathImage">Rotation 180</button>
+        </mat-menu>
+      </li>
+      <li class="nav-item">
+        <a mat-button [matMenuTriggerFor]="menu2" class="nav-link"
+            [ngClass]="{
+              'link-disabled': !pathImage
+            }"
+            style="cursor: pointer;">Ajustements</a>
+        <mat-menu #menu2="matMenu">
+          <button mat-menu-item (click)="onHistoNear(true)" [disabled]="!pathImage">Amelioration</button>
+          <button mat-menu-item (click)="onInversion(true)" [disabled]="!pathImage">Inversion de couleur</button>
+          <button mat-menu-item (click)="onGrayNiveau(true)" [disabled]="!pathImage">Niveau de gris</button>
+          <button mat-menu-item (click)="onBinarisation(true)" [disabled]="!pathImage">Noir et Blanc</button>
+          <button mat-menu-item (click)="onContour()" [disabled]="!pathImage">Tortue de Paper</button>
+          <button mat-menu-item (click)="onConservateur()" [disabled]="!pathImage">Conservateur</button>
+        </mat-menu>
+      </li>
+      <li class="nav-item">
+        <a mat-button [matMenuTriggerFor]="menu3" class="nav-link"
+            [ngClass]="{
+              'link-disabled': !pathImage
+            }"
+            style="cursor: pointer;">Filtrage</a>
+        <mat-menu #menu3="matMenu">
+          <button mat-menu-item (click)="open(content)" [disabled]="!pathImage">Lineaire</button>
+          <button mat-menu-item (click)="openNonLineaire(non)" [disabled]="!pathImage">Non lineaire</button>
+        </mat-menu>
+      </li>
+
+      <li class="nav-item">
+        <a mat-button [matMenuTriggerFor]="menu4" class="nav-link"
+            [ngClass]="{
+              'link-disabled': !pathImage
+            }"
+            style="cursor: pointer;">Niveau</a>
+            <mat-menu #menu4="matMenu">
+              <button mat-menu-item (click)="openLumiere(lumiere)" [disabled]="!pathImage">Lumière</button>
+              <button mat-menu-item (click)="openEtalage(etalage)" [disabled]="!pathImage">Etalage</button>
+            </mat-menu>
+      </li>
+    </ul>
+  </div>
+</header>
+<!-- all modal-->
+  <!-- modal enregistrer sous -->
+    <ng-template #save class="me" let-c="close" let-d="dismiss" style="width: 200px;">
+      <div class="modal-draggable" ngDraggable [handle]="draggeMe">
+        <div #draggeMe class="modal-header">
+          <h4 class="modal-title" id="modal-basic-title">Enregister sous</h4>
+        </div>
+        <div class="modal-body col-auto">
+          <form>
+            <div class="mb-3">
+              <label for="nomFichier" class="form-label">Nom du fichier</label>
+              <input type="text" name="nomFichier" id="nomFichier" class="form-control" [(ngModel)]="nameFile"/>
+            </div>
+            <div class="mb-3">
+              <label for="fileType" class="form-label">Type de fichier</label>
+              <select name="fileType" id="fileType" [(ngModel)]="typeFile" class="form-control">
+                <option value="png">PNG</option>
+                <option value="jpeg">JPEG</option>
+                <option value="jpg">JPG</option>
+              </select>
+            </div>
+          </form>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="c('cancel')">Annuler</button>
+          <button type="button" class="btn btn-outline-dark" (click)="c('save')">Ok</button>
+        </div>
+      </div>
+    </ng-template>
+  <!-- fin modal enregistrer sous -->
+
+  <!-- modal filtrage non-lineaire -->
+    <ng-template #non class="me" let-c="close" let-d="dismiss" style="width: 200px;">
+      <div class="modal-draggable" ngDraggable [handle]="draggeMe">
+        <div #draggeMe class="modal-header">
+          <h4 class="modal-title" id="modal-basic-title">Filtrage non-linéaire</h4>
+        </div>
+        <div class="modal-body col-auto">
+            <input
+            type="radio" name="miniCanvasNon" value="original"
+            id="departInput1" (click)="putOriginal()" class="input-hidden" checked/>
+            <label for="departInput1" class="label-all">
+              <canvas id="canvasDepart1" class="canvas-label" width="120" height="80"></canvas>
+              <p class="image-label">
+                original
+              </p>
+            </label>
+
+            <input
+              type="radio" name="miniCanvasNon" value="erosion"
+              id="erosionInput" (click)="putOriginal(); onFiltrageNonlineaire('erosion', true)" class="input-hidden"/>
+            <label for="erosionInput" class="label-all">
+              <canvas id="canvasErosion" class="canvas-label" width="120" height="80"></canvas>
+              <p class="image-label">
+                Erosion
+              </p>
+            </label>
+
+            <input
+              type="radio" name="miniCanvasNon" value="dilatation"
+              id="dilatationInput" (click)="putOriginal(); onFiltrageNonlineaire('dilatation', true)" class="input-hidden"/>
+            <label for="dilatationInput" class="label-all">
+              <canvas id="canvasDilatation" class="canvas-label" width="120" height="80"></canvas>
+              <p class="image-label">
+                Dilatation
+              </p>
+            </label>
+
+            <input
+              type="radio" name="miniCanvasNon" value="mediane"
+              id="MedianeInput" (click)="putOriginal(); onMediane(true)" class="input-hidden"/>
+            <label for="MedianeInput" class="label-all">
+              <canvas id="canvasMediane" class="canvas-label" width="120" height="80"></canvas>
+              <p class="image-label">
+                Mediane
+              </p>
+            </label>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="c('cancel')">Annuler</button>
+          <button type="button" class="btn btn-outline-dark" (click)="c('save')">Ok</button>
+        </div>
+      </div>
+    </ng-template>
+  <!-- fin filtrage modal non-lineaire -->
+
+  <!-- modal filtrage lineaire -->
+    <ng-template #content class="me" let-c="close" let-d="dismiss">
+      <div class="modal-draggable" ngDraggable [handle]="draggeMe">
+        <div #draggeMe class="modal-header">
+          <h4 class="modal-title" id="modal-basic-title">Filtrage Linéaire</h4>
+        </div>
+        <div class="modal-body modal-scrollable-x col-auto">
+            <input
+              type="radio" name="miniCanvas" value="original"
+              id="departInput" (click)="putOriginal()" class="input-hidden" checked/>
+            <label for="departInput" class="label-all">
+              <canvas id="canvasDepart" class="canvas-label" width="120" height="80"></canvas>
+              <p class="image-label">
+                Original
+              </p>
+            </label>
+
+            <input
+              type="radio" name="miniCanvas" value="lissage"
+              id="lissageInput" (click)="putOriginal(); onFiltrageLineaire('lissage', true)" class="input-hidden" />
+            <label for="lissageInput" class="label-all">
+              <canvas id="canvasLissage" class="canvas-label" width="120" height="80"></canvas>
+              <p class="image-label">
+                Lissage
+              </p>
+            </label>
+            <input
+              type="radio" name="miniCanvas" value="gaussien"
+              id="gaussienInput" (click)="putOriginal(); onFiltrageLineaire('gaussien', true)" class="input-hidden" />
+            <label for="gaussienInput" class="label-all">
+              <canvas id="canvasGaussien" class="canvas-label" width="120" height="80"></canvas>
+              <p class="image-label">
+                Gaussien
+              </p>
+            </label>
+
+            <input
+              type="radio" name="miniCanvas" value="convolution"
+              id="convolutionInput" (click)="putOriginal(); onFiltrageLineaire('convolution', true)" class="input-hidden" />
+            <label for="convolutionInput" class="label-all">
+              <canvas id="canvasConvolution" class="canvas-label" width="120" height="80"></canvas>
+              <p class="image-label">
+                Convolution
+              </p>
+            </label>
+
+            <input
+              type="radio" name="miniCanvas" value="rehausseur"
+              id="rehausseurInput" (click)="putOriginal(); onFiltrageLineaire('rehausseur', true)" class="input-hidden" />
+            <label for="rehausseurInput" class="label-all">
+              <canvas id="canvasRehausseur" class="canvas-label" width="120" height="80"></canvas>
+              <p class="image-label">
+                Rehausseur
+              </p>
+            </label>
+
+            <input
+              type="radio" name="miniCanvas" value="accentuation"
+              id="accentuationInput" (click)="putOriginal(); onFiltrageLineaire('accentuation', true)" class="input-hidden" />
+            <label for="accentuationInput" class="label-all">
+              <canvas id="canvasAccentuation" class="canvas-label" width="120" height="80"></canvas>
+              <p class="image-label">
+                Accentuation
+              </p>
+            </label>
+
+            <input
+              type="radio" name="miniCanvas" value="laplacien"
+              id="laplacienInput" (click)="putOriginal(); onFiltrageLineaire('laplacien', true)" class="input-hidden" />
+            <label for="laplacienInput" class="label-all">
+              <canvas id="canvasLaplacien" class="canvas-label" width="120" height="80"></canvas>
+              <p class="image-label">
+                Laplacien
+              </p>
+            </label>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="c('cancel')">Annuler</button>
+          <button type="button" class="btn btn-outline-dark" (click)="c('save')">Ok</button>
+        </div>
+      </div>
+    </ng-template>
+  <!-- Fin modal diltrage lineaire -->
+
+  <!-- modal niveau > lumiere -->
+    <ng-template #lumiere class="me" let-c="close" let-d="dismiss" style="width: 200px;">
+      <div class="modal-draggable" ngDraggable [handle]="draggeMe">
+        <div #draggeMe class="modal-header">
+          <h4 class="modal-title" id="modal-basic-title">Lumiere</h4>
+        </div>
+        <div class="modal-body col-auto">
+        <div>
+          <label for="minOpac" style="margin-right: 18px;">Opaciter</label>
+            <input type="range" id="minOpac" class="rangeClass" min="-100" max="100" [(ngModel)]="opacity"  (change)="onOpacity()"/>
+        </div>
+          <div>
+            <label for="maxEtalage">Luminositer</label>
+            <input type="range" id="maxEtalage" class="rangeClass" min="-100" max="100" [(ngModel)]="luminosite"  (change)="onLumunosite()"/>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="c('cancel')">Annuler</button>
+          <button type="button" class="btn btn-outline-dark" (click)="c('save')">Ok</button>
+        </div>
+      </div>
+    </ng-template>
+  <!-- Fin modal niveau > lumiere -->
+
+  <!-- modal niveau > etalage -->
+    <ng-template #etalage class="me" let-c="close" let-d="dismiss" style="width: 200px;">
+      <div class="modal-draggable" ngDraggable [handle]="draggeMe">
+        <div #draggeMe class="modal-header">
+          <h4 class="modal-title" id="modal-basic-title">Etalage</h4>
+        </div>
+        <div class="modal-body col-auto">
+          <div>
+            <label for="minEtalage">Minimal</label>
+              <input type="range" id="minEtalage" class="rangeClass" min="0" max="255" [(ngModel)]="minimal"  (change)="onEtalage()"/>
+          </div>
+          <div>
+            <label for="maxEtalage">Maximal</label>
+              <input type="range" id="maxEtalage" class="rangeClass" min="0" max="255" [(ngModel)]="maximal"  (change)="onEtalage()"/>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="c('cancel')">Annuler</button>
+          <button type="button" class="btn btn-outline-dark" (click)="c('save')">Ok</button>
+        </div>
+      </div>
+    </ng-template>
+  <!-- Fin modal niveau > etalage -->
+<!-- Fin all modal-->
+
+<!-- header fin -->
+
+<section id="main-cnotent" style="margin-left: 0px;">
+  <section class="wrapper">
+    <div class="row">
+      <div class="col-lg-9" style="margin-top: 18px">
+        <canvas #canvas width="930" height="610">
+        </canvas>
+      </div>
+      <div class="col-lg-3 right-menu">
+        <section style="margin-top: 18px;">
+          <mat-card style="width: 320px; height: 240px;">
+            <mat-card-header>
+              <mat-card-title>Histogramme</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div echarts [options]="chartOption" [merge]="mergeOptions" class="card-img-top my-chart"></div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="mt-6" style="width: 320px; height: 230px;">
+            <mat-card-header>
+              <mat-card-title>Historique</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="story-scrollable">
+              <h4 [ngClass]="{
+                              'card-title': true,
+                              'story-title': true,
+                              'story-active': i == storyIndice,
+                              'story-to-remove': i > storyIndice}"
+                  *ngFor="let item of arrayStory; let i = index" (click)="resetImage(item.imageData, i)">{{item.nameTache}}</h4>
+            </mat-card-content>
+          </mat-card>
+        </section>
+      </div>
+    </div>
+  </section>
+</section>

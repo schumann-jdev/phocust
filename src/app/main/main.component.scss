@@ -1,0 +1,146 @@
+.header {
+  left: 0;
+  right: 0;
+  z-index: 1002;
+}
+.header, .footer {
+  min-height: 50px;
+  padding: 0 15px;
+}
+.black-bg {
+  background: #22242a;
+  border-bottom: 1px solid #393d46;
+}
+
+.pull-right {
+  float: right !important;
+  margin-top: 15px;
+}
+
+.wrapper {
+  display: inline-block;
+  padding-left: 17px;
+  padding-right: 15px;
+  padding-bottom: 15px;
+  padding-top: 0px;
+  width: 100%;
+}
+
+.right-menu {
+  background: #d6d9dc;
+  height: 685px;
+}
+
+.modal-draggable {
+  background-color: #fff;
+  border-radius: 6px;
+}
+
+.transparent-backdrop.show {
+  opacity: 0 !important;
+}
+
+.input-hidden {
+  position: absolute;
+  left: -9999px;
+}
+
+input[type=radio]:checked + label>canvas {
+  border: 1px solid #fff;
+  box-shadow: 0 0 3px 3px #090;
+}
+
+input[type=radio] + label>canvas {
+  margin-right: 0.75em;
+  transition: 500ms all;
+}
+.modal-scrollable-x {
+  width: 800px;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 0.5rem !important;
+}
+.image-label {
+  position: relative;
+  top: -30px;
+  background-color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+}
+.canvas-label {
+  cursor: pointer;
+}
+.canvas-label:hover {
+  border: 1px solid #fff;
+  box-shadow: 0 0 3px 3px #087;
+}
+.label-all {
+  height: 84px;
+}
+.story-scrollable {
+  max-height: 130px;
+  overflow-y: auto;
+}
+.story-active {
+  background-color: rgb(78, 205, 196);
+}
+.story-title {
+  cursor: pointer;
+  margin: 0 0 4px !important;
+  padding-left: 6px;
+  border-radius: 4px;
+}
+.story-title:hover {
+  background-color: rgb(16, 134, 126);
+}
+.story-to-remove {
+  background-color: slategray;
+  opacity: 0.6;
+}
+#fichier{
+  color: whitesmoke;
+
+  font-size: 17px;
+  font-weight: 600;
+}
+a, a:hover, a:focus {
+  color: rgb(78, 205, 196);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  outline: none;
+}
+ul li {
+  list-style: none;
+}
+
+a.logo {
+  font-size: 24px;
+  color: #f2f2f2;
+  float: left;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+.notify-row {
+  float: left;
+  margin-top: 15px;
+  margin-left: 92px;
+}
+ul.top-menu > li > a {
+  color: #4ecdc4;
+  font-size: 16px;
+  border-radius: 4px;
+  padding: 0px 6px;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
+  background-color: transparent !important;
+  text-decoration: none;
+  color: #3fa39d !important;
+}
+
+.rangeClass {
+  position: absolute;
+  margin-left: 10px;
+}
